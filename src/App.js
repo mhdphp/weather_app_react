@@ -35,10 +35,11 @@ function App() {
       const APIKEY = '73cd9a5978e2edb36b1237edec6cf8c9';
       const city = 'Atlanta'; // for testing purposes
       // axios is a library which will allow to make requests to the server / database
-      const result = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APIKEY}`);
+      const result = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APIKEY}&units=metric`);
 
-      let Ctemp = Math.round(result.data.main.temp - 273.15); // conver temperature to Celsius
-      Ctemp = String(Ctemp) + "C"; // convert Ctemp to string
+      // let Ctemp = Math.round(result.data.main.temp - 273.15); // conver temperature to Celsius
+      let Ctemp = Math.round(result.data.main.temp*10)/10; // round 1
+      //Ctemp = String(Ctemp) + "C"; // convert Ctemp to string
 
       await setAllData({
         city:result.data.name,
@@ -61,7 +62,7 @@ function App() {
           <h1>{allData.city}</h1>
           <h2>{allData.country}</h2>
           <h3>Temperature</h3>
-          <h4>{allData.temperature}</h4>
+          <h4>{allData.temperature} °C</h4>
         </section>
       </div>
       
