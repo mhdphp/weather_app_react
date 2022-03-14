@@ -13,7 +13,7 @@ import axios from 'axios';
 // useEffect hook tells our component app to do something after rendering
 function App() {
   
-  // State hook
+  const [searchCity, setSearchCity] = useState('');
   const [allData, setAllData] = useState({
     city: '',
     country: '',
@@ -30,15 +30,14 @@ function App() {
 
   // https://home.openweathermap.org/api_keys
   const fetchData = async(city) => {
-
     try {
-      const APIKEY = '73cd9a5978e2edb36b1237edec6cf8c9';
-      const city = 'Atlanta'; // for testing purposes
+      const APIKEY = 'f4cb376402cd28c59710ba837efd856f';
+      //const city = 'Bucuresti'; // for testing purposes
       // axios is a library which will allow to make requests to the server / database
       const result = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APIKEY}&units=metric`);
 
       // let Ctemp = Math.round(result.data.main.temp - 273.15); // conver temperature to Celsius
-      let Ctemp = Math.round(result.data.main.temp*10)/10; // round 1
+      let Ctemp = Math.round(result.data.main.temp*10)/10; // round 1 decimal
       //Ctemp = String(Ctemp) + "C"; // convert Ctemp to string
 
       await setAllData({
@@ -51,19 +50,37 @@ function App() {
     }
   }
 
+  const handleSubmit = (event) => {
+    console.log(searchCity);
+    event.preventDefault();
+    fetchData(searchCity);
+  }
+
+  const handleChange = (event) => {
+    event.preventDefault();
+    setSearchCity(event.target.value);
+  }
+
+
   return (
     // section tag in react
     // main tag for the main build
     <main>
       <div className="App">
-            {console.log('This is a test', 
-                  allData.city, allData.country, allData.temperature)}
+        <div>
+          <form onSubmit={handleSubmit}>
+            <input type='text' name='city' placeholder='Location' value={searchCity} onChange={handleChange} />
+            <button for='city' style={{width:'100px', height:'25px', marginTop:'5px'}}>Search</button>
+          </form>
+        </div>
+        
         <section>
           <h1>{allData.city}</h1>
           <h2>{allData.country}</h2>
           <h3>Temperature</h3>
           <h4>{allData.temperature} °C</h4>
         </section>
+
       </div>
       
     </main>
