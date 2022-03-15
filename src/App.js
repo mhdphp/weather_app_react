@@ -17,7 +17,10 @@ function App() {
   const [allData, setAllData] = useState({
     city: '',
     country: '',
-    temperature:''
+    temperature:'',
+    humidity:'',
+    minTemperature:'',
+    weatherIcons:''
   });
 
   // useEffect hook
@@ -31,19 +34,22 @@ function App() {
   // https://home.openweathermap.org/api_keys
   const fetchData = async(city) => {
     try {
-      const APIKEY = 'f4cb376402cd28c59710ba837efd856f';
-      //const city = 'Bucuresti'; // for testing purposes
+      const APIKEY = '9b77cbe0427c2adf900d17172c';
+      //const city = 'London'; // for testing purposes
       // axios is a library which will allow to make requests to the server / database
       const result = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APIKEY}&units=metric`);
 
-      // let Ctemp = Math.round(result.data.main.temp - 273.15); // conver temperature to Celsius
+      // let Ctemp = Math.round(result.data.main.temp - 274.15); // conver temperature to Celsius
       let Ctemp = Math.round(result.data.main.temp*10)/10; // round 1 decimal
       //Ctemp = String(Ctemp) + "C"; // convert Ctemp to string
 
       await setAllData({
         city:result.data.name,
         country: result.data.sys.country,
-        temperature:Ctemp
+        temperature:Ctemp,
+        humidity: result.data.main.humidity,
+        minTemperature: result.data.main.temp_min,
+        weatherIcons: result.data.weather[0].icon
       });  
     } catch (error) {
       console.log('API not loaded correctly or loaded for the first time.');
@@ -70,15 +76,32 @@ function App() {
         <div>
           <form onSubmit={handleSubmit}>
             <input type='text' name='city' placeholder='Location' value={searchCity} onChange={handleChange} />
-            <button for='city' style={{width:'100px', height:'25px', marginTop:'5px'}}>Search</button>
+            <button for='city'>Search</button>
           </form>
         </div>
         
-        <section>
-          <h1>{allData.city}</h1>
-          <h2>{allData.country}</h2>
-          <h3>Temperature</h3>
-          <h4>{allData.temperature} °C</h4>
+        <section id="weather">
+          <div>
+            <img id='weather-img' src={'http://openweathermap.org/img/wn/' 
+                        + allData.weatherIcons + '@2x.png'} />
+            <h2>{allData.city}</h2>
+            <h2>{allData.country}</h2>
+          </div>
+          <div id='weatherData' >
+            <div class='weatherParam'>
+              <h4>Humidity</h4>
+              <p>{allData.humidity} %</p>
+            </div>
+            <div class='weatherParam'>
+              <h4>Temperature</h4>
+              <p>{allData.temperature} °C</p>
+            </div>
+            <div class='weatherParam'>
+              <h4>Min - Temperature</h4>
+              <p>{allData.minTemperature} °C</p>
+            </div>
+          </div>
+          
         </section>
 
       </div>
